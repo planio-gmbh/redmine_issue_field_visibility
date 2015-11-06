@@ -4,7 +4,7 @@ Redmine Issue Field Visibility Plugin
 This plugin allows to hide certain core fields from specific roles.
 
 The fields you can hide are `assigned to`, `category`, `start date`, `due
-date` and `estimated time`.
+date`, `target version` and `estimated time`.
 
 Development of this plugin has been sponsored by
 [SDZeCOM GmbH & Co. KG](http://www.sdzecom.de).
