@@ -2,7 +2,7 @@ require File.expand_path('../../test_helper', __FILE__)
 
 class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCase
   fixtures :projects,
-           :users, :email_addresses,
+           :users,
            :roles,
            :members,
            :member_roles,
@@ -54,7 +54,7 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
   def test_show_should_not_display_hidden_issue_fields
     get :show, id: 1
     assert_response :success
-    assert_select 'td.estimated-hours', '12.00 h'
+    assert_select 'td.estimated-hours', /^12.00 h/
     assert_select 'input[name=?]', 'issue[estimated_hours]'
 
     Setting.plugin_redmine_issue_field_visibility = {
