@@ -6,7 +6,7 @@ This plugin allows to hide certain core fields from specific roles.
 The fields you can hide are `assigned to`, `category`, `start date`, `due
 date` and `estimated time`.
 
-Develompent of this plugin has been sponsored by
+Development of this plugin has been sponsored by
 [SDZeCOM GmbH & Co. KG](http://www.sdzecom.de).
 
 
