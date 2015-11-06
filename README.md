@@ -13,7 +13,7 @@ Develompent of this plugin has been sponsored by
 Installation
 ------------
 
-Standard Redmine plugin installation instructions apply.
+[Standard Redmine plugin installation instructions](https://redmine.org/projects/redmine/wiki/Plugins#Installing-a-plugin) apply.
 
 
 Usage
