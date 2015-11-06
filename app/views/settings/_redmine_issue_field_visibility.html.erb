@@ -1,0 +1,48 @@
+<%= content_for :header_tags do %>
+<style type="text/css">
+  table.list.issue-visibilities tbody tr td {
+    text-align: center !important;
+  }
+  table.list.issue-visibilities tbody tr td.fieldname {
+    text-align: left !important;
+  }
+</style>
+<% end %>
+<% @roles = Role.all %>
+
+<% if @roles.any? %>
+
+  <p style="padding-left: 0;"><%= l :issue_field_visibility_info %></p>
+
+  <table class="list issue-visibilities">
+    <thead>
+      <tr>
+        <th><%= l :label_field %></th>
+        <th colspan="<%= @roles.length %>"><%= l :label_role %></th>
+      </tr>
+      <tr>
+        <td></td>
+        <% for role in @roles %>
+        <td style="width:<%= 75 / @roles.size %>%;">
+          <%= role.name %>
+        </td>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% for field in RedmineIssueFieldVisibility::HIDEABLE_CORE_FIELDS %>
+        <tr>
+          <td class="fieldname"><%= l "field_"+field.sub(/_id$/, '') %></td>
+          <% for role in @roles %>
+            <td>
+              <%= check_box_tag "settings[hiddenfields][#{role.id}][#{field}]", '1', (@settings['hiddenfields'][role.id.to_s][field] rescue false) %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% else %>
+  <p>Set up some roles before using this plugin.</p>
+<% end %>
