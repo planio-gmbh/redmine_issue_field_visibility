@@ -1,0 +1,4 @@
+# Bulgarian strings go here for Rails i18n, translated by Ivan Cenov i_cenov@botevgrad.com
+bg:
+  label_field: Поле
+  issue_field_visibility_info: Изберете полетата, които да бъдат скрити за всяка роля.
