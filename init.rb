@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 require_dependency 'redmine_issue_field_visibility'
 
 Redmine::Plugin.register :redmine_issue_field_visibility do
