@@ -26,7 +26,8 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
   def setup
     User.current = nil
     @issue = Issue.find 1
-    @issue.update_columns estimated_hours: 12, assigned_to_id: 3
+    @issue.update_column :estimated_hours, 12
+    @issue.update_column :assigned_to_id, 3
 
     @request.session[:user_id] = 2
     Setting.plugin_redmine_issue_field_visibility = {}
