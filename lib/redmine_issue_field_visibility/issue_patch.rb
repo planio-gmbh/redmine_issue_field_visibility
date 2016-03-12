@@ -12,7 +12,8 @@ module RedmineIssueFieldVisibility
       end
 
       def hidden_core_field?(name)
-        hidden_core_fields.include? name.to_s
+        hidden_core_fields.include?(name.to_s) or
+          hidden_core_fields.include?("#{name}_id")
       end
 
       def hidden_core_fields
