@@ -38,7 +38,7 @@ module RedmineIssueFieldVisibility
         result &= list
       end
 
-      result
+      result || []
     else
       []
     end
