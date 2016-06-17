@@ -17,7 +17,16 @@ module RedmineIssueFieldVisibility
       end
 
       def hidden_core_fields
-        @hidden_core_fields ||= RedmineIssueFieldVisibility::hidden_core_fields  User.current, project
+        user = @user_for_hidden_core_fields || User.current
+        @hidden_core_fields = {}
+        @hidden_core_fields[user] ||= RedmineIssueFieldVisibility::hidden_core_fields user, project
+      end
+
+      def with_hidden_core_fields_for_user(user, &block)
+        @user_for_hidden_core_fields = user
+        yield
+      ensure
+        @user_for_hidden_core_fields = nil
       end
 
       RedmineIssueFieldVisibility::HIDEABLE_CORE_FIELDS.each do |field|
@@ -26,6 +35,13 @@ module RedmineIssueFieldVisibility
         end
       end
 
+      def each_notification(users, &block)
+        users.group_by do |user|
+          user.roles_for_project(project).sort
+        end.values.each do |part|
+          super(part, &block)
+        end
+      end
     end
   end
 end

@@ -6,6 +6,7 @@ module RedmineIssueFieldVisibility
 
   def self.setup
     QueriesHelperPatch.apply
+    IssuesHelperPatch.apply
     IssuePatch.apply
     IssueQueryPatch.apply
     JournalPatch.apply
