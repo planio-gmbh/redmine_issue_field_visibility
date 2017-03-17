@@ -5,11 +5,11 @@ module RedmineIssueFieldVisibility
   HIDEABLE_CORE_FIELDS = Tracker::CORE_FIELDS - %w(done_ratio parent_issue_id)
 
   def self.setup
-    QueriesHelperPatch.apply
-    IssuesHelperPatch.apply
-    IssuePatch.apply
-    IssueQueryPatch.apply
-    JournalPatch.apply
+    RedmineIssueFieldVisibility::QueriesHelperPatch.apply
+    RedmineIssueFieldVisibility::IssuesHelperPatch.apply
+    RedmineIssueFieldVisibility::IssuePatch.apply
+    RedmineIssueFieldVisibility::IssueQueryPatch.apply
+    RedmineIssueFieldVisibility::JournalPatch.apply
   end
 
   def self.hidden_core_fields(user = User.current, project = nil)
