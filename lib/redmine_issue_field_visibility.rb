@@ -10,6 +10,7 @@ module RedmineIssueFieldVisibility
     RedmineIssueFieldVisibility::IssuePatch.apply
     RedmineIssueFieldVisibility::IssueQueryPatch.apply
     RedmineIssueFieldVisibility::JournalPatch.apply
+    RedmineIssueFieldVisibility::VersionPatch.apply
   end
 
   def self.hidden_core_fields(user = User.current, project = nil)
