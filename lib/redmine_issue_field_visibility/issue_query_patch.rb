@@ -9,7 +9,7 @@ module RedmineIssueFieldVisibility
       def initialize_available_filters
         super
 
-        RedmineIssueFieldVisibility::hidden_core_fields(User.current, project).each do |field|
+        hidden_core_fields.each do |field|
           delete_available_filter field
         end
       end
@@ -24,7 +24,15 @@ module RedmineIssueFieldVisibility
       end
 
       def hidden_core_fields
-        @hidden_core_fields ||= RedmineIssueFieldVisibility::hidden_core_fields  User.current, project
+        @hidden_core_fields ||= begin
+          fields = RedmineIssueFieldVisibility.hidden_core_fields(
+            User.current, project
+          )
+          if fields.include?("estimated_hours")
+            fields << "total_estimated_hours"
+          end
+          fields
+        end
       end
 
     end
