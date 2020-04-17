@@ -35,7 +35,12 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
   end
 
   def test_index_should_not_display_hidden_issue_fields
-    get :index, project_id: @issue.project.identifier, c: %w(subject estimated_hours assigned_to)
+    if Rails.version.to_f < 5.0
+      get :index, project_id: @issue.project.identifier, c: %w(subject estimated_hours assigned_to)
+    else
+      get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours assigned_to) }
+    end
+
     assert_select 'option[value=estimated_hours]', 2
     assert_select 'td.estimated_hours', '12.00'
     assert_select 'td.assigned_to a', 'Dave Lopper'
@@ -50,15 +55,26 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
       }
     }
 
-    get :index, project_id: @issue.project.identifier, c: %w(subject estimated_hours)
+    if Rails.version.to_f < 5.0
+      get :index, project_id: @issue.project.identifier, c: %w(subject estimated_hours)
+    else
+      get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours) }
+    end
+
     assert_select 'option[value=estimated_hours]', 0
     assert_select 'td.estimated_hours', text: '12', count: 0
     assert_select 'td.assigned_to a', text: 'Dave Lopper', count: 0
   end
 
   def test_show_should_not_display_hidden_issue_fields
-    get :show, id: 1
+    if Rails.version.to_f < 5.0
+      get :show, id: 1
+    else
+      get :show, params: { id: 1 }
+    end
+
     assert_response :success
+
     if @table_layout
       assert_select 'td.estimated-hours', /^12.00 h/
     else
@@ -79,7 +95,12 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
     assert_equal %w(estimated_hours), @issue.hidden_core_fields
     assert !@issue.safe_attribute_names.include?('estimated_hours')
 
-    get :show, :id => 1
+    if Rails.version.to_f < 5.0
+      get :show, :id => 1
+    else
+      get :show, params: { :id => 1 }
+    end
+
     assert_response :success
     assert_select 'input[name=?]', 'issue[estimated_hours]', :count => 0
     if @table_layout
@@ -95,7 +116,12 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
     @issue.estimated_hours = 13.5
     @issue.save
 
-    get :show, id: 1
+    if Rails.version.to_f < 5.0
+      get :show, id: 1
+    else
+      get :show, params: { id: 1 }
+    end
+
     assert_response :success
     assert_select 'strong', 'Estimated time'
 
@@ -107,7 +133,12 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
       }
     }
 
-    get :show, :id => 1
+    if Rails.version.to_f < 5.0
+      get :show, :id => 1
+    else
+      get :show, params: { :id => 1 }
+    end
+
     assert_response :success
     assert_select 'strong', text: 'Estimated time', count: 0
   end
