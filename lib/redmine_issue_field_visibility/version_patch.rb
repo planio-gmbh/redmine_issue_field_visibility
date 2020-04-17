@@ -12,8 +12,12 @@ module RedmineIssueFieldVisibility
     end
 
     def self.apply
-      unless VersionFixedIssuesAssociationExtension < FixedIssuesAssocPatch
-        VersionFixedIssuesAssociationExtension.prepend FixedIssuesAssocPatch
+      begin
+        unless VersionFixedIssuesAssociationExtension < FixedIssuesAssocPatch
+          VersionFixedIssuesAssociationExtension.prepend FixedIssuesAssocPatch
+        end
+      rescue NameError
+        # noop
       end
     end
 
