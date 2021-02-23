@@ -11,9 +11,9 @@ Redmine::Plugin.register :redmine_issue_field_visibility do
   author     'Jens Krämer, Planio GmbH'
   author_url 'https://plan.io/'
 
-  version '1.0.1'
+  version '1.0.2'
 
-  requires_redmine version_or_higher: '2.6.0'
+  requires_redmine version_or_higher: '3.3.14'
 
   settings partial: 'settings/redmine_issue_field_visibility', default: {}
 end
