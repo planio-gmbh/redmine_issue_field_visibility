@@ -12,16 +12,16 @@ addons:
   postgresql: "9.4"
 
 env:
-  - REDMINE_VER=3.3-stable
+  - REDMINE_VER=3.4-stable
   - REDMINE_VER=4.1-stable
   - REDMINE_VER=master
 
 matrix:
   exclude:
   - rvm: 2.6.6
-    env: REDMINE_VER=3.3-stable
+    env: REDMINE_VER=3.4-stable
   - rvm: 2.7.2
-    env: REDMINE_VER=3.3-stable
+    env: REDMINE_VER=3.4-stable
 
 install: "echo skip bundle install"
 
