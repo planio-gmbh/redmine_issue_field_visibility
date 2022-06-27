@@ -18,8 +18,12 @@ module RedmineIssueFieldVisibility
 
       def hidden_core_fields
         user = @user_for_hidden_core_fields || User.current
-        @hidden_core_fields = {}
+        @hidden_core_fields ||= {}
         @hidden_core_fields[user] ||= RedmineIssueFieldVisibility::hidden_core_fields user, project
+      end
+
+      def reload
+        super.tap { @hidden_core_fields = nil }
       end
 
       def with_hidden_core_fields_for_user(user, &block)

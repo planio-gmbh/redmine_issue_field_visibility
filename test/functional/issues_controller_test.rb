@@ -24,13 +24,11 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
   tests IssuesController
 
   def setup
-    User.current = nil
     @issue = Issue.find 1
-    @issue.update_column :estimated_hours, 12
-    @issue.update_column :assigned_to_id, 3
+    @issue.update_columns estimated_hours: 12, assigned_to_id: 3
 
+    User.current = @user = User.find 2
     @request.session[:user_id] = 2
-    Setting.plugin_redmine_issue_field_visibility = {}
   end
 
   def test_index_should_not_display_hidden_issue_fields
@@ -40,45 +38,50 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
     assert_select 'td.assigned_to a', 'Dave Lopper'
     assert_select 'option[value=estimated_hours]', 'Estimated time'
 
-    Setting.plugin_redmine_issue_field_visibility = {
+    with_settings('plugin_redmine_issue_field_visibility' => {
       'hiddenfields' => {
         '1' => {
           'estimated_hours' => '1',
           'assigned_to_id' => '1'
         }
       }
-    }
+    }) do
 
-    get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours) }
-    assert_select 'option[value=estimated_hours]', 0
-    assert_select 'td.estimated_hours', text: '12', count: 0
-    assert_select 'td.assigned_to a', text: 'Dave Lopper', count: 0
+      get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours) }
+      assert_select 'option[value=estimated_hours]', 0
+      assert_select 'td.estimated_hours', text: '12', count: 0
+      assert_select 'td.assigned_to a', text: 'Dave Lopper', count: 0
+    end
   end
 
   def test_show_should_not_display_hidden_issue_fields
+    assert_equal %w(), @issue.hidden_core_fields
+    assert @issue.safe_attribute_names.include?('estimated_hours')
     get :show, params: { id: 1 }
     assert_response :success
     assert_select 'div.label', 'Estimated time:'
     assert_select 'div.value', /^12.00 h/
     assert_select 'input[name=?]', 'issue[estimated_hours]'
 
-    Setting.plugin_redmine_issue_field_visibility = {
+    with_settings('plugin_redmine_issue_field_visibility' => {
       'hiddenfields' => {
         '1' => {
           'estimated_hours' => '1'
         }
       }
-    }
+    }) do
 
-    @issue.reload
-    assert_equal %w(estimated_hours), @issue.hidden_core_fields
-    assert !@issue.safe_attribute_names.include?('estimated_hours')
+      @issue.reload
+      assert_equal %w(estimated_hours), RedmineIssueFieldVisibility::hidden_core_fields(@user, @issue.project)
+      assert_equal %w(estimated_hours), @issue.hidden_core_fields
+      assert !@issue.safe_attribute_names.include?('estimated_hours')
 
-    get :show, params: { :id => 1 }
-    assert_response :success
-    assert_select 'input[name=?]', 'issue[estimated_hours]', :count => 0
-    assert_select 'div.value', text: /^12.00 h/, :count => 0
-    assert_select 'div.label', text: 'Estimated time:', :count => 0
+      get :show, params: { :id => 1 }
+      assert_response :success
+      assert_select 'input[name=?]', 'issue[estimated_hours]', :count => 0
+      assert_select 'div.value', text: /^12.00 h/, :count => 0
+      assert_select 'div.label', text: 'Estimated time:', :count => 0
+    end
   end
 
   def test_show_should_not_display_hidden_issue_fields_journals
@@ -90,17 +93,18 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
     assert_response :success
     assert_select 'strong', 'Estimated time'
 
-    Setting.plugin_redmine_issue_field_visibility = {
+    with_settings('plugin_redmine_issue_field_visibility' => {
       'hiddenfields' => {
         '1' => {
           'estimated_hours' => '1'
         }
       }
-    }
+    }) do
 
-    get :show, params: { :id => 1 }
-    assert_response :success
-    assert_select 'strong', text: 'Estimated time', count: 0
+      get :show, params: { :id => 1 }
+      assert_response :success
+      assert_select 'strong', text: 'Estimated time', count: 0
+    end
   end
 
 end
