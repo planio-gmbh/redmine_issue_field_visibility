@@ -36,7 +36,7 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
   def test_index_should_not_display_hidden_issue_fields
     get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours assigned_to) }
     assert_select 'option[value=estimated_hours]', 2
-    assert_select 'td.estimated_hours', '12.00'
+    assert_select 'td.estimated_hours', '12:00'
     assert_select 'td.assigned_to a', 'Dave Lopper'
     assert_select 'option[value=estimated_hours]', 'Estimated time'
 
