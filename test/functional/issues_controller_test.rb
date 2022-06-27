@@ -31,7 +31,6 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
 
     @request.session[:user_id] = 2
     Setting.plugin_redmine_issue_field_visibility = {}
-    @table_layout = Redmine::VERSION::MAJOR < 3 || (Redmine::VERSION::MAJOR == 3 && Redmine::VERSION::MINOR == 1)
   end
 
   def test_index_should_not_display_hidden_issue_fields
@@ -59,12 +58,8 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
   def test_show_should_not_display_hidden_issue_fields
     get :show, id: 1
     assert_response :success
-    if @table_layout
-      assert_select 'td.estimated-hours', /^12.00 h/
-    else
-      assert_select 'div.label', 'Estimated time:'
-      assert_select 'div.value', /^12.00 h/
-    end
+    assert_select 'div.label', 'Estimated time:'
+    assert_select 'div.value', /^12.00 h/
     assert_select 'input[name=?]', 'issue[estimated_hours]'
 
     Setting.plugin_redmine_issue_field_visibility = {
@@ -82,12 +77,8 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < ActionController::TestCa
     get :show, :id => 1
     assert_response :success
     assert_select 'input[name=?]', 'issue[estimated_hours]', :count => 0
-    if @table_layout
-      assert_select 'td.estimated-hours', :count => 0
-    else
-      assert_select 'div.value', text: /^12.00 h/, :count => 0
-      assert_select 'div.label', text: 'Estimated time:', :count => 0
-    end
+    assert_select 'div.value', text: /^12.00 h/, :count => 0
+    assert_select 'div.label', text: 'Estimated time:', :count => 0
   end
 
   def test_show_should_not_display_hidden_issue_fields_journals
