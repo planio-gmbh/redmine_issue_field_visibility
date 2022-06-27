@@ -24,6 +24,7 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
   tests IssuesController
 
   def setup
+    Setting.clear_cache
     @issue = Issue.find 1
     @issue.update_columns estimated_hours: 12, assigned_to_id: 3
 
@@ -31,13 +32,17 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
     @request.session[:user_id] = 2
   end
 
-  def test_index_should_not_display_hidden_issue_fields
+  def test_index_should_display_not_hidden_issue_fields
+    assert_equal %w(), @issue.hidden_core_fields
+    assert @issue.safe_attribute_names.include?('estimated_hours')
     get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours assigned_to) }
     assert_select 'option[value=estimated_hours]', 2
-    assert_select 'td.estimated_hours', '12:00'
+    assert_select 'td.estimated_hours', /12/, @response.body.to_s
     assert_select 'td.assigned_to a', 'Dave Lopper'
     assert_select 'option[value=estimated_hours]', 'Estimated time'
+  end
 
+  def test_index_should_not_display_hidden_issue_fields
     with_settings('plugin_redmine_issue_field_visibility' => {
       'hiddenfields' => {
         '1' => {
@@ -46,15 +51,14 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
         }
       }
     }) do
-
-      get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours) }
+      get :index, params: { project_id: @issue.project.identifier, c: %w(subject estimated_hours assigned_to) }
       assert_select 'option[value=estimated_hours]', 0
       assert_select 'td.estimated_hours', text: '12', count: 0
       assert_select 'td.assigned_to a', text: 'Dave Lopper', count: 0
     end
   end
 
-  def test_show_should_not_display_hidden_issue_fields
+  def test_show_should_display_not_hidden_issue_fields
     assert_equal %w(), @issue.hidden_core_fields
     assert @issue.safe_attribute_names.include?('estimated_hours')
     get :show, params: { id: 1 }
@@ -62,7 +66,9 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
     assert_select 'div.label', 'Estimated time:'
     assert_select 'div.value', /^12.00 h/
     assert_select 'input[name=?]', 'issue[estimated_hours]'
+  end
 
+  def test_show_should_not_display_hidden_issue_fields
     with_settings('plugin_redmine_issue_field_visibility' => {
       'hiddenfields' => {
         '1' => {
@@ -70,8 +76,6 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
         }
       }
     }) do
-
-      @issue.reload
       assert_equal %w(estimated_hours), RedmineIssueFieldVisibility::hidden_core_fields(@user, @issue.project)
       assert_equal %w(estimated_hours), @issue.hidden_core_fields
       assert !@issue.safe_attribute_names.include?('estimated_hours')
@@ -84,7 +88,7 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
     end
   end
 
-  def test_show_should_not_display_hidden_issue_fields_journals
+  def test_show_should_display_not_hidden_issue_fields_journals
     j = @issue.init_journal User.find(1)
     @issue.estimated_hours = 13.5
     @issue.save
@@ -92,7 +96,9 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
     get :show, params: { id: 1 }
     assert_response :success
     assert_select 'strong', 'Estimated time'
+  end
 
+  def test_show_should_not_display_hidden_issue_fields_journals
     with_settings('plugin_redmine_issue_field_visibility' => {
       'hiddenfields' => {
         '1' => {
@@ -100,6 +106,14 @@ class RedmineIssueFieldVisibilityIssuesControllerTest < Redmine::ControllerTest
         }
       }
     }) do
+
+      j = @issue.init_journal User.find(1)
+      @issue.estimated_hours = 13.5
+      @issue.save
+
+      assert_equal %w(estimated_hours), RedmineIssueFieldVisibility::hidden_core_fields(@user, @issue.project)
+      assert_equal %w(estimated_hours), @issue.hidden_core_fields
+      assert !@issue.safe_attribute_names.include?('estimated_hours')
 
       get :show, params: { :id => 1 }
       assert_response :success

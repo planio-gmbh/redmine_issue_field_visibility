@@ -17,6 +17,7 @@ class HiddenCoreFieldsTest < ActiveSupport::TestCase
            :journal_details
 
   setup do
+    Setting.clear_cache
     @issue = Issue.find 1
     @issue.update_columns estimated_hours: 12, assigned_to_id: 3
 
