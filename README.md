@@ -1,4 +1,4 @@
-Redmine Issue Field Visibility Plugin  [![Build Status](https://github.com/planio-gmbh/redmine_issue_field_visibility/wokflows/Test%20with%20Redmine/badge.svg?branch=master)
+Redmine Issue Field Visibility Plugin ![Build Status](https://github.com/planio-gmbh/redmine_issue_field_visibility/workflows/Test%20with%20Redmine/badge.svg?branch=master)
 =====================================
 
 This plugin allows to hide certain core fields from specific roles.
