@@ -1,0 +1,31 @@
+name: Test with Redmine
+
+on:
+  push:
+    branches:
+      - master
+      - planio/4.2
+  pull_request:
+    branches:
+      - master
+      - planio/4.2
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        redmine: [v4.2]
+        ruby: [v2.7]
+        database: [postgresql, mysql]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Redmine plugin test
+      uses: two-pack/redmine-plugin-test-action@v2
+      with:
+        plugin_name: redmine_issue_field_visibility
+        redmine_version: ${{ matrix.redmine }}
+        ruby_version: ${{ matrix.ruby }}
+        database: ${{ matrix.database }}
