@@ -4,18 +4,9 @@ module RedmineIssueFieldVisibility
   # parent_issue_id doesn't make much sense
   HIDEABLE_CORE_FIELDS = Tracker::CORE_FIELDS - %w(done_ratio parent_issue_id)
 
-  def self.setup
-    RedmineIssueFieldVisibility::QueriesHelperPatch.apply
-    RedmineIssueFieldVisibility::IssuesHelperPatch.apply
-    RedmineIssueFieldVisibility::IssuePatch.apply
-    RedmineIssueFieldVisibility::IssueQueryPatch.apply
-    RedmineIssueFieldVisibility::JournalPatch.apply
-    RedmineIssueFieldVisibility::VersionPatch.apply
-  end
-
   def self.hidden_core_fields(user = User.current, project = nil)
     return [] if user.admin?
-    if fields_by_role = Setting.plugin_redmine_issue_field_visibility['hiddenfields']
+    if (fields_by_role = Setting.plugin_redmine_issue_field_visibility['hiddenfields'])
       roles = if project
         user.roles_for_project(project)
       else
@@ -24,7 +15,7 @@ module RedmineIssueFieldVisibility
 
       # get the list of hidden fields for each role
       hidden_field_lists = roles.map do |role|
-        if hidden_fields = fields_by_role[role.id.to_s]
+        if (hidden_fields = fields_by_role[role.id.to_s])
           hidden_fields.map do |field_name, value|
             field_name if value.to_s == '1'
           end
