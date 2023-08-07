@@ -16,7 +16,7 @@ Redmine::Plugin.register :redmine_issue_field_visibility do
   settings partial: 'settings/redmine_issue_field_visibility', default: {}
 end
 
-require File.dirname(__FILE__) + '/lib/redmine_issue_field_visibility/redmine_issue_field_visibility'
+require File.dirname(__FILE__) + '/lib/redmine_issue_field_visibility'
 require File.dirname(__FILE__) + '/lib/redmine_issue_field_visibility/patches/queries_helper_patch'
 require File.dirname(__FILE__) + '/lib/redmine_issue_field_visibility/patches/issues_helper_patch'
 require File.dirname(__FILE__) + '/lib/redmine_issue_field_visibility/patches/issue_patch'
