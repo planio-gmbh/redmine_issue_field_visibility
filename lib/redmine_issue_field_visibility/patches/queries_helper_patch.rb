@@ -13,8 +13,12 @@ module RedmineIssueFieldVisibility
       end
 
       module InstanceMethods
-        def column_content_with_ifv(column, issue)
-          column_content_without_ifv(column, issue) unless issue.hidden_core_field?(column.name)
+        def column_content_with_ifv(column, item)
+          if item.is_a?(Issue)
+            column_content_without_ifv(column, item) unless item.hidden_core_field?(column.name)
+          else
+            column_content_without_ifv(column, item)
+          end
         end
       end
     end
